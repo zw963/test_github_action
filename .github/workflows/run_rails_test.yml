@@ -1,0 +1,49 @@
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
+# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+
+name: Ruby
+
+on:
+  push:
+    branches:
+      - master
+      - production
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  # following "test" is one of our job, we can add multi-jobs for one workflow.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install postgresSQL
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: '11'
+        env:
+          AIRHOST_DB_HOST: postgres
+      - name: Install postgre
+        run: |
+          sudo apt update
+          sudo apt install postgresql postgresql-contrib
+          sudo systemctl start postgresql
+      - name: Check Postgres running
+        run: |
+          sleep 5
+          psql -U postgres -h 127.0.0.1 -c "SELECT version()"
+      # - name: Checking out code
+      #   uses: actions/checkout@v2
+      # - name: Installing ruby
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     bundler-cache: true
+      # - name: Installing dependencies
+      #   run: bundle install
+      # - name: Run tests
+      #   run: bundle exec rails test -v
